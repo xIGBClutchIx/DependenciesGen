@@ -15,9 +15,9 @@ task install(dependsOn: [publishToMavenLocal])
 
 gradlePlugin {
     plugins {
-        librarygen {
-            id = "LibraryGen"
-            implementationClass = "me.clutchy.librarygen.LibraryGenPlugin"
+        dependenciesgen {
+            id = "DependenciesGen"
+            implementationClass = "me.clutchy.dependenciesgen.DependenciesGenPlugin"
         }
     }
 }
