@@ -1,0 +1,18 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+}
+
+gradlePlugin {
+    plugins {
+        greeting {
+            id = 'me.clutchy.greeting'
+            implementationClass = 'me.clutchy.librarymanager.LibraryManagerPlugin'
+        }
+    }
+}
