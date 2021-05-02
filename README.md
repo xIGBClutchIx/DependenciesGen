@@ -25,6 +25,10 @@ configure<DependenciesGen> {
 }
 ```
 
-
 ## CLI Usage
 `./gradlew gen-dependencies` - Exports all the dependencies to a dependencies.json file in the output resources/META-INF folder for the project.
+
+### Example of dependencies.json
+```json
+[{"group": "org.reflections", "name": "reflections", "version": "0.9.12", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": [{"group": "org.javassist", "name": "javassist", "version": "3.26.0-GA", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": []}]}, {"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib-jdk8", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": [{"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib-jdk7", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": [{"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": [{"group": "org.jetbrains", "name": "annotations", "version": "20.1.0", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": []}, {"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib-common", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": []}]}]}, {"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": [{"group": "org.jetbrains", "name": "annotations", "version": "20.1.0", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": []}, {"group": "org.jetbrains.kotlin", "name": "kotlin-stdlib-common", "version": "1.4.32", "repo": "https://repo.maven.apache.org/maven2/", "dependencies": []}]}]}]
+```
