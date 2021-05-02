@@ -1,18 +1,23 @@
 plugins {
-    id 'java-gradle-plugin'
+    id "java-gradle-plugin"
+    id "maven-publish"
 }
 
+group = "me.clutchy"
 version = "1.0.0"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
+
+task install(dependsOn: [publishToMavenLocal])
 
 gradlePlugin {
     plugins {
-        greeting {
-            id = 'me.clutchy.greeting'
-            implementationClass = 'me.clutchy.librarymanager.LibraryManagerPlugin'
+        librarygen {
+            id = "LibraryGen"
+            implementationClass = "me.clutchy.librarygen.LibraryGenPlugin"
         }
     }
 }
