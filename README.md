@@ -5,7 +5,7 @@ Includes a way to ignore certain dependencies based on the group and name.
 
 ## Build Gradle Usage
 ``` groovy
-import me.clutchy.dependenciesgen.DependenciesGenPlugin.DependenciesGen
+import me.clutchy.dependenciesgen.gradle.DependenciesGenPlugin.DependenciesGen
 
 buildscript {
     repositories {

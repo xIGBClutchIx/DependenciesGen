@@ -6,7 +6,7 @@ plugins {
 
 archivesBaseName = "DependenciesGen"
 group = "me.clutchy"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -19,7 +19,7 @@ gradlePlugin {
     plugins {
         dependenciesgen {
             id = "me.clutchy.dependenciesgen"
-            implementationClass = "me.clutchy.dependenciesgen.DependenciesGenPlugin"
+            implementationClass = "me.clutchy.dependenciesgen.gradle.DependenciesGenPlugin"
         }
     }
 }

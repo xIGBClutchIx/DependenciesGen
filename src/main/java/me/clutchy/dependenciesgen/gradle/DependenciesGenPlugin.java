@@ -1,12 +1,11 @@
-package me.clutchy.dependenciesgen;
+package me.clutchy.dependenciesgen.gradle;
 
-import org.gradle.api.DefaultTask;
+import me.clutchy.dependenciesgen.shared.Dependency;
 import org.gradle.api.Project;
 import org.gradle.api.Plugin;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.UrlArtifactRepository;
-import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,57 +19,12 @@ import java.util.List;
 public class DependenciesGenPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
-        project.getTasks().register("gen-dependencies", DependenciesGenTask.class);
+        project.getTasks().register("gen-dependencies", task -> createDependenciesJson(project, project.getExtensions().getByType(DependenciesGen.class)));
         project.getExtensions().create("DependenciesGen", DependenciesGen.class, project);
     }
 
-    public abstract static class DependenciesGenTask extends DefaultTask {
-
-        @TaskAction
-        public void generate() {
-            DependenciesGen extension = getProject().getExtensions().getByType(DependenciesGen.class);
-            createDependenciesJson(getProject(), extension);
-        }
-    }
-
-    public static class DependenciesGen {
-        public List<String> ignored;
-
-        public DependenciesGen(Project project) {
-            ignored = project.getObjects().listProperty(String.class).getOrElse(new ArrayList<>());
-        }
-    }
-
-    public static class Dependency {
-        private final String group;
-        private final String name;
-        private final String version;
-        private final String repo;
-        private final List<Dependency> dependencies;
-
-        public Dependency(String group, String name, String version, String repo, List<Dependency> dependencies) {
-            this.group = group;
-            this.name = name;
-            this.version = version;
-            this.repo = repo;
-            this.dependencies = dependencies;
-        }
-
-        @Override
-        public String toString() {
-            String output = "{";
-            output += "\"group\": \"" + group + "\"";
-            output += ", \"name\": \"" + name + "\"";
-            output += ", \"version\": \"" + version + "\"";
-            if (repo != null) output += ", \"repo\": \"" + repo + "\"";
-            output += ", \"dependencies\": " + dependencies;
-            output += "}";
-            return output;
-        }
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void createDependenciesJson(Project project, DependenciesGen extension) {
+    private void createDependenciesJson(Project project, DependenciesGen extension) {
         Path metaResources = project.getBuildDir().toPath().resolve("resources").resolve("main").resolve("META-INF");
         metaResources.toFile().mkdirs();
         try {
@@ -80,14 +34,14 @@ public class DependenciesGenPlugin implements Plugin<Project> {
         }
     }
 
-    private static List<Dependency> getAllDependencies(Project project, DependenciesGen extension) {
+    private List<Dependency> getAllDependencies(Project project, DependenciesGen extension) {
         List<Dependency> dependencies = new ArrayList<>();
         project.getConfigurations().getByName("apiDependenciesMetadata").getResolvedConfiguration().getFirstLevelModuleDependencies()
                 .forEach(depend -> dependencies.addAll(getDependenciesFromParent(project, depend, extension)));
         return dependencies;
     }
 
-    private static List<Dependency> getDependenciesFromParent(Project project, ResolvedDependency depend, DependenciesGen extension) {
+    private List<Dependency> getDependenciesFromParent(Project project, ResolvedDependency depend, DependenciesGen extension) {
         List<Dependency> dependencies = new ArrayList<>();
         String group = depend.getModuleGroup();
         String name = depend.getModuleName();
@@ -106,7 +60,7 @@ public class DependenciesGenPlugin implements Plugin<Project> {
         return dependencies;
     }
 
-    private static String getRepo(Project project, String group, String name, String version) {
+    private String getRepo(Project project, String group, String name, String version) {
         // Get all the repositories for a project
         for (ArtifactRepository artifactRepo : project.getRepositories()) {
             // Only url repositories
@@ -126,7 +80,7 @@ public class DependenciesGenPlugin implements Plugin<Project> {
         return null;
     }
 
-    private static URL getDependencyURL(String url, String group, String name, String version) {
+    private URL getDependencyURL(String url, String group, String name, String version) {
         if (url == null || url.trim().isEmpty()) return null;
         if (!url.endsWith("/")) url += "/";
         try {
@@ -136,15 +90,15 @@ public class DependenciesGenPlugin implements Plugin<Project> {
         }
     }
 
-    private static String getPath(String group, String name, String version) {
+    private String getPath(String group, String name, String version) {
         return group.replaceAll("\\.", "/") + "/" + name + "/" + version + "/";
     }
 
-    private static String getFileName(String name, String version) {
+    private String getFileName(String name, String version) {
         return name + "-" + version + ".jar";
     }
 
-    private static boolean checkIfURLExists(URL url) {
+    private boolean checkIfURLExists(URL url) {
         if (url == null) return false;
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
