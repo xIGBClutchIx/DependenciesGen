@@ -16,7 +16,7 @@ buildscript {
         classpath("me.clutchy:DependenciesGen:1.0.0")
     }
 }
-apply(plugin = "DependenciesGen")
+apply(plugin = "me.clutchy.dependenciesgen")
 
 tasks.getByName("classes").dependsOn(tasks.getByName("gen-dependencies"))
 

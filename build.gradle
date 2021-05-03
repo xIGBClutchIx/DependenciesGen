@@ -1,8 +1,10 @@
 plugins {
     id "java-gradle-plugin"
     id "maven-publish"
+    id "com.gradle.plugin-publish" version "0.14.0"
 }
 
+archivesBaseName = "DependenciesGen"
 group = "me.clutchy"
 version = "1.0.0"
 
@@ -16,8 +18,26 @@ task install(dependsOn: [publishToMavenLocal])
 gradlePlugin {
     plugins {
         dependenciesgen {
-            id = "DependenciesGen"
+            id = "me.clutchy.dependenciesgen"
             implementationClass = "me.clutchy.dependenciesgen.DependenciesGenPlugin"
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+pluginBundle {
+    website = "https://clutchy.me/"
+    vcsUrl = "https://github.com/xIGBClutchIx/DependenciesGen"
+    description = "Gradle plugin that takes all the dependencies of a project and puts them into a single file."
+    tags = ["dependencies"]
+
+    plugins {
+        dependenciesgen {
+            displayName = "Dependencies Gen plugin"
         }
     }
 }
