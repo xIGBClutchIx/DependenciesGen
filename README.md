@@ -1,4 +1,4 @@
-# Dependencies Gen
+# Dependencies Gen [![Gradle Plugin](https://img.shields.io/badge/Gradle-Plugin-brightgreen)](https://plugins.gradle.org/plugin/me.clutchy.dependenciesgen) [![Maven Central](https://img.shields.io/maven-central/v/me.clutchy/DependenciesGen)](https://search.maven.org/artifact/me.clutchy/DependenciesGen)
 Dependencies Gen is a gradle plugin that takes all the dependencies of a project and then exports needed information to a dependencies.json file in META-INF of the project.
 
 Includes a way to ignore certain dependencies based on the group and name.
@@ -11,7 +11,7 @@ import me.clutchy.dependenciesgen.gradle.DependenciesGenPlugin.DependenciesGen
 
 plugins {
     id("me.clutchy.dependenciesgen") version "1.0.1"
-}t
+}
 
 tasks.getByName("classes").dependsOn(tasks.getByName("gen-dependencies")) // Optional but good to include.
 
