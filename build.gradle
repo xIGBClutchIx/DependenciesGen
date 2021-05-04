@@ -2,6 +2,8 @@ plugins {
     id "java-gradle-plugin"
     id "maven-publish"
     id "com.gradle.plugin-publish" version "0.14.0"
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+    id "signing"
 }
 
 archivesBaseName = "DependenciesGen"
@@ -40,4 +42,62 @@ pluginBundle {
             displayName = "Dependencies Gen plugin"
         }
     }
+}
+
+def pomFile = {
+    name = "DependenciesGen"
+    description = "Gradle plugin that takes all the dependencies of a project and puts them into a single file."
+    url = "https://github.com/xIGBClutchIx/DependenciesGen"
+    licenses {
+        license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+    developers {
+        developer {
+            id = "xIGBClutchIx"
+            name = "Cameron Weaver"
+            email = "lockerzmodding@gmail.com"
+        }
+    }
+    scm {
+        connection = "scm:git:git://github.com/xIGBClutchIx/DependenciesGen.git"
+        developerConnection = "scm:git:ssh://github.com/xIGBClutchIx/DependenciesGen.git"
+        url = "https://xIGBClutchIx@github.com/xIGBClutchIx/DependenciesGen"
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom pomFile
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            pluginMaven(MavenPublication) {
+                pom pomFile
+            }
+            dependenciesgenPluginMarkerMaven(MavenPublication) {
+                pom pomFile
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri('https://s01.oss.sonatype.org/service/local/'))
+            snapshotRepositoryUrl.set(uri('https://s01.oss.sonatype.org/content/repositories/snapshots/'))
+        }
+    }
+}
+
+signing {
+    sign publishing.publications
 }
