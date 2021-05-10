@@ -37,6 +37,7 @@ public class DependencyDownloader {
     }
 
     public void downloadDependencies(InputStream stream) {
+        if (stream == null) return;
         List<Dependency> dependencies = new ArrayList<>();
         // Read from our json file we gave it.
         try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
