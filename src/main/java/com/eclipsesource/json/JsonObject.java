@@ -21,6 +21,8 @@
  ******************************************************************************/
 package com.eclipsesource.json;
 
+import com.eclipsesource.json.JsonObject.Member;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Reader;
@@ -28,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import com.eclipsesource.json.JsonObject.Member;
 
 /**
  * Represents a JSON object, a set of name/value pairs, where the names are strings and the values
@@ -668,25 +668,28 @@ public class JsonObject extends JsonValue implements Iterable<Member> {
      *
      * @return an iterator over the members of this object
      */
+    @Override
     public Iterator<Member> iterator() {
         final Iterator<String> namesIterator = names.iterator();
         final Iterator<JsonValue> valuesIterator = values.iterator();
-        return new Iterator<JsonObject.Member>() {
 
+        return new Iterator<>() {
+            @Override
             public boolean hasNext() {
                 return namesIterator.hasNext();
             }
 
+            @Override
             public Member next() {
                 String name = namesIterator.next();
                 JsonValue value = valuesIterator.next();
                 return new Member(name, value);
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
-
         };
     }
 

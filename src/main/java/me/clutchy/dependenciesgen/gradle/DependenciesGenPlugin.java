@@ -1,16 +1,18 @@
 package me.clutchy.dependenciesgen.gradle;
 
 import me.clutchy.dependenciesgen.shared.Dependency;
-import org.gradle.api.Project;
 import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.UrlArtifactRepository;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 
 public class DependenciesGenPlugin implements Plugin<Project> {
 
+    @Override
     public void apply(Project project) {
         project.getTasks().register("gen-dependencies", task -> createDependenciesJson(project, project.getExtensions().getByType(DependenciesGen.class)));
         project.getExtensions().create("DependenciesGen", DependenciesGen.class, project);
@@ -27,10 +30,10 @@ public class DependenciesGenPlugin implements Plugin<Project> {
     private void createDependenciesJson(Project project, DependenciesGen extension) {
         Path metaResources = project.getBuildDir().toPath().resolve("resources").resolve("main").resolve("META-INF");
         metaResources.toFile().mkdirs();
-        try {
-            Files.write(metaResources.resolve("dependencies.json"), getAllDependencies(project, extension).toString().getBytes());
+        try (BufferedWriter writer = Files.newBufferedWriter(metaResources.resolve("dependencies.json"), StandardCharsets.UTF_8)) {
+            writer.write(getAllDependencies(project, extension).toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error writing dependencies.json");
         }
     }
 
@@ -104,6 +107,7 @@ public class DependenciesGenPlugin implements Plugin<Project> {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("HEAD");
             int responseCode = connection.getResponseCode();
+            connection.disconnect();
             return 200 <= responseCode && responseCode <= 399;
         } catch (Exception e) {
             return false;

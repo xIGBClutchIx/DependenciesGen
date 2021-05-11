@@ -7,14 +7,11 @@ import com.eclipsesource.json.JsonValue;
 import me.clutchy.dependenciesgen.shared.Dependency;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -75,11 +72,11 @@ public class DependencyDownloader {
             // Possibly do version checking in the future and unload older?
             loadedArtifacts.add(dependency.getGroup() + ":" + dependency.getName());
             new Thread(() -> {
-                Path cacheDependencyPath = Paths.get("cache", getPath(dependency));
+                File cacheDependencyPath = new File("cache", getPath(dependency));
                 try {
                     // Create default directories
-                    Files.createDirectories(cacheDependencyPath);
-                    File jar = cacheDependencyPath.resolve(getFileName(dependency, false)).toFile();
+                    Files.createDirectories(cacheDependencyPath.toPath());
+                    File jar = cacheDependencyPath.toPath().resolve(getFileName(dependency, false)).toFile();
                     // If the file does not exist then try to download it.
                     // If it does then check to make sure it is valid based off MD5.
                     if (!jar.exists()) {
@@ -91,7 +88,7 @@ public class DependencyDownloader {
                         // Make sure our file MD5 is still valid?
                         if (!fileMd5.trim().isEmpty()) {
                             // Read the dependency md5 from url
-                            try (BufferedReader readerUrl = new BufferedReader(new InputStreamReader(getConnection(dependency, true)))) {
+                            try (BufferedReader readerUrl = new BufferedReader(new InputStreamReader(getConnection(dependency, true), StandardCharsets.UTF_8))) {
                                 String urlMd5 = readerUrl.readLine();
                                 if (urlMd5 != null && !urlMd5.equalsIgnoreCase(fileMd5)) {
                                     downloadFile(dependency, jar, true);
