@@ -84,13 +84,15 @@ public class DependencyDownloader {
                     } else {
                         logger.info("Checking dependency: " + dependency.getName());
                         // Read the dependencies MD5
-                        String fileMd5 = toHexString(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(jar.toPath())));
+                        byte[] bytes = Files.readAllBytes(jar.toPath());
+                        byte[] hash = MessageDigest.getInstance("MD5").digest(bytes);
+                        String md5 = toHexString(hash);
                         // Make sure our file MD5 is still valid?
-                        if (!fileMd5.trim().isEmpty()) {
+                        if (!md5.trim().isEmpty()) {
                             // Read the dependency md5 from url
                             try (BufferedReader readerUrl = new BufferedReader(new InputStreamReader(getConnection(dependency, true), StandardCharsets.UTF_8))) {
                                 String urlMd5 = readerUrl.readLine();
-                                if (urlMd5 != null && !urlMd5.equalsIgnoreCase(fileMd5)) {
+                                if (urlMd5 != null && !urlMd5.equalsIgnoreCase(md5)) {
                                     downloadFile(dependency, jar, true);
                                 }
                             } catch (Exception ignored) {
