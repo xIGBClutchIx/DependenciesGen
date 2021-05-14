@@ -10,7 +10,7 @@ Include as a normal dependency to easily download the dependencies and load them
 import me.clutchy.dependenciesgen.gradle.DependenciesGenPlugin.DependenciesGen
 
 plugins {
-    id("me.clutchy.dependenciesgen") version "1.0.3"
+    id("me.clutchy.dependenciesgen") version "1.0.4"
 }
 
 tasks.getByName("classes").dependsOn(tasks.getByName("gen-dependencies")) // Optional but good to include.
@@ -23,11 +23,11 @@ configure<DependenciesGen> {
 ## Build Gradle Usage for Dependency
 ``` groovy
 plugins {
-    id("me.clutchy.dependenciesgen") version "1.0.3" // Optional but good if you want to shadow the jar.
+    id("me.clutchy.dependenciesgen") version "1.0.4" // Optional but good if you want to shadow the jar.
 }
 
 dependencies {
-    api("me.clutchy:DependenciesGen:1.0.3")
+    api("me.clutchy:DependenciesGen:1.0.4")
 }
 
 // All below is optional but good if you want to shadow the jar.
@@ -40,7 +40,7 @@ configure<DependenciesGen> {
 tasks.withType<ShadowJar> {
     exclude("/me/clutchy/dependenciesgen/gradle/")
     dependencies {
-        include(dependency("me.clutchy:DependenciesGen:1.0.3"))
+        include(dependency("me.clutchy:DependenciesGen:1.0.4"))
     }
 }
 ```

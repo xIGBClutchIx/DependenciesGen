@@ -33,7 +33,7 @@ public class DependencyDownloader {
         this.logger = logger;
     }
 
-    public void downloadDependencies(InputStream stream) {
+    public void downloadDependencies(InputStream stream, DownloadCallback callback) {
         if (stream == null) return;
         List<Dependency> dependencies = new ArrayList<>();
         // Read from our json file we gave it.
@@ -48,10 +48,10 @@ public class DependencyDownloader {
             logger.log(Level.SEVERE, "Error reading dependencies json", e);
             System.exit(0);
         }
-        downloadDependencies(dependencies);
+        downloadDependencies(dependencies, callback);
     }
 
-    public void downloadDependencies(List<Dependency> parentDependencies) {
+    public void downloadDependencies(List<Dependency> parentDependencies, DownloadCallback callback) {
         logger.info("Loading dependencies");
         List<Dependency> dependencies = new ArrayList<>();
         // Already loaded list
@@ -100,8 +100,8 @@ public class DependencyDownloader {
                             }
                         }
                     }
-                    // Add to the class loader - Spigot use a url class loader.
-                    LoadJarsUtil.addFile(classLoader, logger, jar);
+                    // Add to callback and let the user take care of it.
+                    callback.callback(jar.toURI().toURL());
                     // Add to local list of dependencies
                     loadedDependenciesIds.add(dependency.getName());
                 } catch (Exception e) {
@@ -144,15 +144,15 @@ public class DependencyDownloader {
         return hexString.toString();
     }
 
-    private URL getUrl(Dependency dependency, boolean MD5) throws MalformedURLException {
+    private URL getUrl(Dependency dependency, boolean hash) throws MalformedURLException {
         String repo = dependency.getRepo();
         if (repo == null || repo.trim().isEmpty()) repo = "https://repo.maven.apache.org/maven2/";
         if (!repo.endsWith("/")) repo += "/";
-        return new URL(repo + getPath(dependency) + getFileName(dependency, MD5));
+        return new URL(repo + getPath(dependency) + getFileName(dependency, hash));
     }
 
-    private String getFileName(Dependency dependency, boolean MD5) {
-        return dependency.getName() + "-" + dependency.getVersion() + ".jar" + (MD5 ? ".md5" : "");
+    private String getFileName(Dependency dependency, boolean hash) {
+        return dependency.getName() + "-" + dependency.getVersion() + ".jar" + (hash ? ".md5" : "");
     }
 
     private String getPath(Dependency dependency) {
